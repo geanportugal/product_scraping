@@ -64,13 +64,6 @@ Na REST API teremos os seguintes endpoints:
 
 ## Readme do Repositório
 
-- Deve conter o título de cada projeto
-- Uma descrição de uma frase
-- Como instalar e usar o projeto (instruções)
-- Não esqueça o [.gitignore](https://www.toptal.com/developers/gitignore)
-
-## Readme do Repositório
-
 - Deve conter o título do projeto
 - Uma descrição sobre o projeto em frase
 - Deve conter uma lista com linguagem, framework e/ou tecnologias usadas
