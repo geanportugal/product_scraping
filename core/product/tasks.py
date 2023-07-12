@@ -2,9 +2,8 @@ import requests
 import re
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-from celery.schedules import crontab
-from app.celery import app
-from app.product.models import Product
+from core.celery import app
+from core.product.models import Product
 
 
 BASE_URL = "https://world.openfoodfacts.org"

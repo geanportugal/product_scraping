@@ -1,21 +1,22 @@
-version: '3.8'
+version: '3'
 
 services:
   # ---------------------------------------------------------------------------
   # Mongo DB
   # ---------------------------------------------------------------------------
+
   mongodb:
-    image: mongo
+    container_name: challange-mongo
+    image: mongo:latest
     restart: always
+    environment:
+      MONGO_INITDB_DATABASE: challange
     ports:
       - 27017:27017
     volumes:
-      - ./data:/data/db
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=challange
-      - MONGO_INITDB_ROOT_PASSWORD=challange
-      - MONGO_INITDB_DATABASE=challange
+      - mongodbdata:/data/db
 
+ 
 
   # ---------------------------------------------------------------------------
   # Redis
@@ -39,12 +40,9 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
       - RABBITMQ_DEFAULT_VHOST=/
-    volumes:
-      - ./rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
     ports:
       - 15672:15672
       - 5672:5672
 
 volumes:
-  database-data:
-    driver: local
+  mongodbdata:
