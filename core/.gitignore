@@ -1,0 +1,36 @@
+# Python/Django
+*.pyc
+*.pyo
+__pycache__/
+*.env
+*.sqlite3
+*.pyc
+*.swp
+
+# Django project directories
+*.log
+*.pot
+*.pyc
+*.sqlite3
+local_settings.py
+db.sqlite3
+media
+staticfiles
+
+# Virtual environment
+venv/
+env/
+
+# Ignore pipenv virtual environment
+Pipfile
+Pipfile.lock
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+# Visual Studio Code
+.vscode/
+
+# Python IDEs
+.idea/
+*.iml
