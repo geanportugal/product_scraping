@@ -125,7 +125,7 @@ CELERY_TASK_ROUTES = {
 CELERY_BEAT_SCHEDULE = {
     'cron_products': {
         'task': 'core.product.tasks.scrape_products_task',
-        'schedule': crontab(minute='*/5'),
+        'schedule': crontab(hour='0', minute=0), # executa a task todos os dias a meia noite
     },
 }
 
