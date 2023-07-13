@@ -7,7 +7,7 @@ class Product(models.Model):
         IMPORTED = 'imported', _('Imported')
         DRAFT = 'draft', _('Draft')
         
-    code = models.CharField(verbose_name="Code", max_length=255, unique=True, db_index=True)
+    code = models.CharField(verbose_name="Code", max_length=255, primary_key=True, db_index=True)
     barcode = models.CharField(verbose_name="Barcode", max_length=255, blank=True, null=True, db_index=True)
     status = models.CharField(verbose_name="Status", max_length=25, choices=Status.choices, default=Status.IMPORTED)
     imported_t = models.DateTimeField(verbose_name="Imported At", auto_now_add=True)
@@ -25,4 +25,3 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return self.product_name
-

@@ -28,6 +28,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Email Admin
+
+EMAIL_ADMIN = 'email@example.com'
+
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'username@example.com'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_USE_TLS = True
 
 # Application definition
 
@@ -40,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_extensions',
+    'rest_framework_swagger',
     'core.product',
 ]
 
@@ -99,21 +109,34 @@ CACHES = {
 
 # CELERY AND RABBITMQ
 
-CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672"
+CELERY_BROKER_URL = BROKER_URL = "amqp://guest:guest@localhost:5672"
 CELERY_RESULT_BACKEND = 'redis://localhost/1'
 CELERY_TIMEZONE = "America/Sao_Paulo"
 
+CELERY_TASK_QUEUES = {
+    "high_priority": {
+        "binding_key": "high_priority",
+    }
+}
+
 CELERY_TASK_ROUTES = {
- 'app.product.tasks.*': {'queue': 'high_priority'},
+ 'core.product.tasks.*': {'queue': 'high_priority'},
 }
 CELERY_BEAT_SCHEDULE = {
     'cron_products': {
-        'task': 'app.product.tasks.app1_test',
-        'schedule': crontab(minute='*/10'),
+        'task': 'core.product.tasks.scrape_products_task',
+        'schedule': crontab(minute='*/5'),
     },
 }
 
+MAX_PRODUCTS = 100
+BASE_URL = "https://world.openfoodfacts.org"
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'PAGE_SIZE': 100
+}
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
