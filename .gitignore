@@ -16,7 +16,9 @@ local_settings.py
 db.sqlite3
 media
 staticfiles
-
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
 # Virtual environment
 venv/
 env/
