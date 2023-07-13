@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Mongo DB
+  # ---------------------------------------------------------------------------
+
+  mongodb:
+    container_name: challange-mongo
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: challange
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodbdata:/data/db
+
+  # ---------------------------------------------------------------------------
+  # Redis
+  # ---------------------------------------------------------------------------
+  redis:
+    container_name: challange-redis
+    image: redis:latest
+    restart: on-failure
+    ports:
+      - 6379:6379
+
+  # ---------------------------------------------------------------------------
+  # RabbitMQ
+  # ---------------------------------------------------------------------------
+  rabbitmq:
+    container_name: challange-rabbitmq
+    image: rabbitmq:latest
+    restart: on-failure
+    volumes:
+      - rabbitmq_data:/data/rabbitmq
+    environment:
+      - RABBITMQ_ERLANG_COOKIE=SWQOKODSQALRPCLNMEQG
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_VHOST=/
+    ports:
+      - 15672:15672
+      - 5672:5672
+
+volumes:
+  mongodbdata:
+  rabbitmq_data:
