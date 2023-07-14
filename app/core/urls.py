@@ -13,17 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from core.product.api.viewsets import ProductModelViewSet, WelcomeViewSet
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from rest_framework.schemas import get_schema_view
 from rest_framework.documentation import include_docs_urls
-
-from core.product.api.viewsets import ProductModelViewSet, WelcomeViewSet
-
+from rest_framework.schemas import get_schema_view
 
 router = routers.DefaultRouter()
-router.register(r'products',ProductModelViewSet)
+router.register(r'products', ProductModelViewSet)
 router.register(r'', WelcomeViewSet, basename='welcome')
 
 schema_view = get_schema_view(title='Open Food Prodcuts API')

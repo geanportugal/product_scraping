@@ -4,7 +4,7 @@
 
 O projeto tem como objetivo dar suporte a equipe de nutricionistas da empresa Fitness Foods LC para que possam comparar de maneira rápida a informação nutricional dos alimentos da base do Open Food Facts.
 
-## O projeto
+## Técnologias utilizadas
 
 - Python 
 - Django 
@@ -16,24 +16,37 @@ O projeto tem como objetivo dar suporte a equipe de nutricionistas da empresa Fi
 - Docker
 
 ### Instalando o Projeto:
-- Para instalar o projeto é necessário fazer o clone do projeto em sua máquina local 
-- Crie uma virtualenv 
-- Instale os requirements
-    * Você pode também tentar executar o arquivo active_workspace.py
-        - python active_workspace.py
+- Faça o clone do projeto em sua máquina local - git clone
+- Instale o Docker Desktop [here](https://www.docker.com/get-started)
 ### Configurando o Projeto:
-- Para o envio de email de notificação de erros abra o arquivo settings.py e insira seu e-mail na constante EMAIL_ADMIN
-    é necessário configurar o servidor smtp
-    EMAIL_HOST = 'smtp.example.com'
-    EMAIL_PORT = 587
-    EMAIL_HOST_USER = 'username@example.com'
-    EMAIL_HOST_PASSWORD = 'password'
-    EMAIL_USE_TLS = True
+- Configure as variáveis de ambiente
+    * Renomei o arquivo .env_example para .env
+    * gere uma nova secret_key - Execute o comando o no console python
+    * insira a nova secret no arquivo .env
+    ```python
+       import secrets
+       print(secrets.token_urlsafe()
+    ```
+    * Configure os arquivos de smtp para o envio de notifições
+    ```python
+        EMAIL_HOST = 'smtp.example.com'
+        EMAIL_PORT = 587
+        EMAIL_HOST_USER = 'username@example.com'
+        EMAIL_HOST_PASSWORD = 'password'
+        EMAIL_USE_TLS = True
+    ```
+    * Para as demais variáveis não são necessárias nenhuma ação 
     
-### Executando o projeto:
-    - python manage.py runserver
-    - celery -A core worker -l info
-    - celery -A core beat -l info
+### Rodando a aplicação em um docker container
+    - docker-compose up --build
+    - acesse [127.0.0.1:8000](http://127.0.0.1:8000) 
+
+
+## Acessando os endpoints da API
+ - `/products` lista todos os produtos  
+ - `/products/<code>` mostra um produto
+ - `/docs/` Mostra a documentação
+ - `/schema/` Mostra os schemas
 
 
 >  This is a challenge by [Coodesh](https://coodesh.com/)

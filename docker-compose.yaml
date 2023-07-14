@@ -1,0 +1,104 @@
+version: '3'
+
+services:
+  
+
+  # ---------------------------------------------------------------------------
+  # Mongo DB
+  # ---------------------------------------------------------------------------
+
+  mongodb:
+    container_name: challange-mongo
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: challange
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data:/data/db
+
+  # ---------------------------------------------------------------------------
+  # Redis
+  # ---------------------------------------------------------------------------
+  redis:
+    container_name: challange-redis
+    image: redis:latest
+    restart: on-failure
+    ports:
+      - 6379:6379
+
+  # ---------------------------------------------------------------------------
+  # RabbitMQ
+  # ---------------------------------------------------------------------------
+  rabbitmq:
+    container_name: challange-rabbit
+    image: rabbitmq:3-management
+    hostname: rabbit1
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+# ---------------------------------------------------------------------------
+  # Django 
+  #----------------------------------------------------------------------------
+  djangoapp:
+    container_name: challange-django
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./app:/app
+      - ./data/web/static:/data/web/static/
+      - ./data/web/media:/data/web/media/
+    env_file:
+      - ./dotenv/.env
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+  # ---------------------------------------------------------------------------
+  # Celery
+  # --------------------------------------------------------------------------
+  celery:
+    restart: always
+    build:
+      context: .
+    volumes:
+      - ./app:/app
+    container_name: celery
+    env_file:
+      - ./dotenv/.env
+    command: celery -A core worker -l info
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+
+  celery-beat:
+    container_name: celery-beat
+    build:
+      context: .
+    volumes:
+      - ./app:/app
+    env_file:
+      - ./dotenv/.env
+    command: celery -A core beat -l info
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+      - celery
+
+
+
+volumes:
+  mongodbdata:
+  rabbitmq_data:
+
+networks:
+  default:
+    driver: bridge

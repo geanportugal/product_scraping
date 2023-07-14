@@ -22,6 +22,7 @@ celerybeat-schedule.dir
 # Virtual environment
 venv/
 env/
+data/
 
 # Ignore pipenv virtual environment
 Pipfile

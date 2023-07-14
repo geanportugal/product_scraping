@@ -9,34 +9,40 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
 from pathlib import Path
+
 from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR.parent / 'data' / 'web'
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p%b-9d7gih6@@glk6vt_+o)#*c$r*_xple*hu!$fst@5e&)lgf'
+
+SECRET_KEY = os.getenv('SECRET_KEY', 'change-me')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.getenv('DEBUG', 0)))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',')
+    if h.strip()
+]
 
 # Email Admin
 
-EMAIL_ADMIN = 'email@example.com'
+EMAIL_ADMIN = os.getenv('EMAIL_ADMIN', 'change-me')
 
-EMAIL_HOST = 'smtp.example.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'username@example.com'
-EMAIL_HOST_PASSWORD = 'password'
-EMAIL_USE_TLS = True
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'change-me')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 'change-me'))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'change-me')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'change-me')
+EMAIL_USE_TLS = bool(int(os.getenv('DEBUG', 0)))
 
 # Application definition
 
@@ -49,7 +55,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_extensions',
-    'rest_framework_swagger',
     'core.product',
 ]
 
@@ -89,10 +94,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'challange',
-        'HOST': 'localhost',  # default is 'localhost'
-        'PORT': 27017,    # default is 27017
+        'ENGINE': os.getenv('ENGINE', 'change-me'),
+        'NAME': os.getenv('MONGO_DB', 'change-me'),
+        'CLIENT': {
+            'host': os.getenv('MONGO_HOST', 'change-me'),
+        }
     }
 }
 
@@ -100,17 +106,20 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": os.getenv('LOCATION', 'change-me'),
+        "KEY_PREFIX": "challange",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 1,  # in seconds
+            "SOCKET_TIMEOUT": 0.5,  # in seconds
         }
     }
 }
 
 # CELERY AND RABBITMQ
 
-CELERY_BROKER_URL = BROKER_URL = "amqp://guest:guest@localhost:5672"
-CELERY_RESULT_BACKEND = 'redis://localhost/1'
+CELERY_BROKER_URL = BROKER_URL = os.getenv('CELERY_BROKER_URL', 'change-me')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'change-me')
 CELERY_TIMEZONE = "America/Sao_Paulo"
 
 CELERY_TASK_QUEUES = {
@@ -120,12 +129,13 @@ CELERY_TASK_QUEUES = {
 }
 
 CELERY_TASK_ROUTES = {
- 'core.product.tasks.*': {'queue': 'high_priority'},
+    'core.product.tasks.*': {'queue': 'high_priority'},
 }
 CELERY_BEAT_SCHEDULE = {
     'cron_products': {
         'task': 'core.product.tasks.scrape_products_task',
-        'schedule': crontab(hour='0', minute=0), # executa a task todos os dias a meia noite
+        # executa a task todos os dias a meia noite
+        'schedule': crontab(hour='0', minute='0')
     },
 }
 
@@ -171,7 +181,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+# /data/web/static
+STATIC_ROOT = DATA_DIR / 'static'
+
+MEDIA_URL = '/media/'
+# /data/web/media
+MEDIA_ROOT = DATA_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
